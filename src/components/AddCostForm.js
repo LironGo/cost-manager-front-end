@@ -1,3 +1,7 @@
+/**
+ * AddCostForm component
+ * Lets users add a new cost item and persists it to IndexedDB.
+ */
 import React, { useState } from 'react';
 import {
   Paper,
@@ -14,6 +18,9 @@ import {
 } from '@mui/material';
 import { addCost } from '../utils/idb';
 
+/**
+ * Form for creating a new cost entry.
+ */
 const AddCostForm = () => {
   const [formData, setFormData] = useState({
     sum: '',
@@ -36,6 +43,7 @@ const AddCostForm = () => {
     'OTHER'
   ];
 
+  /** Updates form state for controlled inputs. */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData(prev => ({
@@ -44,6 +52,7 @@ const AddCostForm = () => {
     }));
   };
 
+  /** Handles form submission, validation, and saving. */
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -103,6 +112,7 @@ const AddCostForm = () => {
     }
   };
 
+  /** Closes the feedback snackbar. */
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };

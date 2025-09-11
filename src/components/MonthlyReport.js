@@ -1,3 +1,7 @@
+/**
+ * MonthlyReport component
+ * Generates and displays a table report for a selected month and year.
+ */
 import React, { useState } from 'react';
 import {
   Paper,
@@ -21,6 +25,9 @@ import {
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
 
+/**
+ * UI for generating a monthly costs report.
+ */
 const MonthlyReport = () => {
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
@@ -47,6 +54,7 @@ const MonthlyReport = () => {
     { value: 12, label: 'December' }
   ];
 
+  /** Updates report form state for controlled inputs. */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData(prev => ({
@@ -55,6 +63,7 @@ const MonthlyReport = () => {
     }));
   };
 
+  /** Fetches data and prepares the monthly report. */
   const handleGenerateReport = async () => {
     setLoading(true);
     
@@ -83,6 +92,7 @@ const MonthlyReport = () => {
     }
   };
 
+  /** Closes the feedback snackbar. */
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };

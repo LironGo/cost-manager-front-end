@@ -1,3 +1,7 @@
+/**
+ * Settings component
+ * Allows configuring the exchange rates API URL and viewing current rates.
+ */
 import React, { useState, useEffect } from 'react';
 import {
   Paper,
@@ -11,19 +15,23 @@ import {
 } from '@mui/material';
 import { setExchangeUrl, getExchangeUrl, getExchangeRates } from '../services/currencyService';
 
+/** Settings screen for currency configuration. */
 const Settings = () => {
   const [exchangeUrl, setExchangeUrlState] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
+  // Load current settings on mount
   useEffect(() => {
     // Load current settings
     setExchangeUrlState(getExchangeUrl());
   }, []);
 
+  /** Updates the exchange rates URL input. */
   const handleUrlChange = (event) => {
     setExchangeUrlState(event.target.value);
   };
 
+  /** Persists the exchange rates URL. */
   const handleSaveSettings = () => {
     try {
       setExchangeUrl(exchangeUrl);
@@ -42,6 +50,7 @@ const Settings = () => {
     }
   };
 
+  /** Tests connectivity to the configured exchange URL. */
   const handleTestConnection = async () => {
     try {
       const response = await fetch(exchangeUrl);
@@ -70,6 +79,7 @@ const Settings = () => {
     }
   };
 
+  /** Closes the feedback snackbar. */
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };

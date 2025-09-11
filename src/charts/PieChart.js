@@ -1,3 +1,7 @@
+/**
+ * PieChart component
+ * Displays category breakdown for a selected month using a pie chart.
+ */
 import React, { useState, useEffect } from 'react';
 import {
   Paper,
@@ -16,6 +20,7 @@ import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, T
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
 
+/** Renders a pie chart of costs grouped by category. */
 const PieChart = () => {
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
@@ -45,6 +50,7 @@ const PieChart = () => {
   // Colors for pie chart segments
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
 
+  /** Updates control state for chart inputs. */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData(prev => ({
@@ -53,6 +59,7 @@ const PieChart = () => {
     }));
   };
 
+  /** Builds pie data by grouping costs by category. */
   const generateChart = async () => {
     setLoading(true);
     
@@ -96,6 +103,7 @@ const PieChart = () => {
     }
   };
 
+  /** Closes the feedback snackbar. */
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };

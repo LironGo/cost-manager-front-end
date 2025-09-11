@@ -1,3 +1,7 @@
+/**
+ * BarChart component
+ * Shows monthly totals for a selected year using a bar chart.
+ */
 import React, { useState } from 'react';
 import {
   Paper,
@@ -16,6 +20,7 @@ import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
 
+/** Renders a bar chart of monthly totals for the selected year. */
 const BarChart = () => {
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
@@ -41,6 +46,7 @@ const BarChart = () => {
     { value: 12, label: 'Dec' }
   ];
 
+  /** Updates control state for chart inputs. */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData(prev => ({
@@ -49,6 +55,7 @@ const BarChart = () => {
     }));
   };
 
+  /** Builds chart data by aggregating per-month totals. */
   const generateChart = async () => {
     setLoading(true);
     
@@ -93,6 +100,7 @@ const BarChart = () => {
     }
   };
 
+  /** Closes the feedback snackbar. */
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };

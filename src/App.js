@@ -1,3 +1,7 @@
+/**
+ * Application root component
+ * Provides the main layout and tab navigation between features.
+ */
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,6 +24,13 @@ const theme = createTheme({
   },
 });
 
+/**
+ * Renders the content of a single tab when active.
+ * @param {object} props
+ * @param {React.ReactNode} props.children - Content to render
+ * @param {number} props.value - Current active tab index
+ * @param {number} props.index - This panel's index
+ */
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div
@@ -38,6 +49,9 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
+/**
+ * App component renders the top navigation and routes to feature tabs.
+ */
 function App() {
   const [currentTab, setCurrentTab] = useState(0);
 
