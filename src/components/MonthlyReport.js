@@ -24,11 +24,13 @@ import {
 } from '@mui/material';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
+// getReport reads costs for the given month; convertCurrency normalizes totals
 
 /**
  * UI for generating a monthly costs report.
  */
 const MonthlyReport = () => {
+  // Local UI state: form inputs, fetched report, loading, and feedback
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
@@ -53,6 +55,7 @@ const MonthlyReport = () => {
     { value: 11, label: 'November' },
     { value: 12, label: 'December' }
   ];
+  // Pre-defined months/currencies drive dropdowns and avoid magic numbers
 
   /** Updates report form state for controlled inputs. */
   const handleInputChange = (event) => {
@@ -68,6 +71,7 @@ const MonthlyReport = () => {
     setLoading(true);
     
     try {
+      // Fetch raw data and convert sums to selected currency if required
       const rawReport = await getReport(formData.year, formData.month, formData.currency);
       
       // Convert currencies if needed
@@ -75,6 +79,7 @@ const MonthlyReport = () => {
       
       setReport(convertedReport);
       
+      // Notify user that the report is ready
       setSnackbar({
         open: true,
         message: 'Report generated successfully!',
@@ -107,6 +112,7 @@ const MonthlyReport = () => {
         Generate a detailed report for a specific month and year in your preferred currency.
       </Typography>
 
+      {/* Controls to pick year, month, and currency */}
       <Box sx={{ display: 'flex', gap: 2, mb: 4, flexWrap: 'wrap' }}>
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Year</InputLabel>
@@ -156,6 +162,7 @@ const MonthlyReport = () => {
           </Select>
         </FormControl>
 
+        {/* Generate triggers data retrieval and currency conversion */}
         <Button
           variant="contained"
           onClick={handleGenerateReport}
@@ -166,6 +173,7 @@ const MonthlyReport = () => {
         </Button>
       </Box>
 
+      {/* When data exists, render the summary and the detailed table */}
       {report && (
         <Box>
           <Typography variant="h5" gutterBottom>

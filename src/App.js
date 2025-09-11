@@ -23,6 +23,7 @@ const theme = createTheme({
     },
   },
 });
+// Theme centralizes colors/typography so the app has consistent styling
 
 /**
  * Renders the content of a single tab when active.
@@ -32,6 +33,7 @@ const theme = createTheme({
  * @param {number} props.index - This panel's index
  */
 function TabPanel({ children, value, index, ...other }) {
+  // Hide content when its index does not match the selected tab
   return (
     <div
       role="tabpanel"
@@ -53,16 +55,20 @@ function TabPanel({ children, value, index, ...other }) {
  * App component renders the top navigation and routes to feature tabs.
  */
 function App() {
+  // Track which tab is currently selected in the UI
   const [currentTab, setCurrentTab] = useState(0);
 
+  // Update selected tab when user clicks a different tab header
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
   };
 
   return (
+    // Provide the Material UI theme and normalize styles across browsers
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div className="App">
+        {/* Top app bar with application title */}
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -72,6 +78,7 @@ function App() {
         </AppBar>
         
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          {/* Tabs control the active feature view */}
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={currentTab} onChange={handleTabChange} aria-label="cost manager tabs">
               <Tab label="Add Cost" />
@@ -82,6 +89,7 @@ function App() {
             </Tabs>
           </Box>
           
+          {/* Each TabPanel renders its feature when its index matches currentTab */}
           <TabPanel value={currentTab} index={0}>
             <AddCostForm />
           </TabPanel>

@@ -5,6 +5,7 @@
  */
 
 import { convertCurrency } from '../services/currencyService';
+// Currency conversion utility normalizes stored sums for display/reporting
 
 /**
  * Opens a connection to the Cost Manager database
@@ -44,6 +45,7 @@ export const openCostsDB = function(databaseName, databaseVersion) {
         };
     });
 };
+// Database is created lazily and upgraded with necessary stores/indexes
 
 /**
  * Adds a new cost item to the database
@@ -100,6 +102,7 @@ export const addCost = function(cost) {
         }).catch(reject);
     });
 };
+// Stored records include normalized fields and computed date breakdown
 
 /**
  * Gets a detailed report for a specific month and year in a specific currency
@@ -147,6 +150,7 @@ export const getReport = async function(year, month, currency) {
     const convertedReport = await convertCurrency(report, currency);
     return convertedReport;
 };
+// Reports are pulled by composite index and then converted to target currency
 
 // Default export for convenience
 export default {

@@ -6,6 +6,7 @@
 
 // Global object to hold the database reference
 const idb = {};
+// Exposes simple functions for opening DB, adding costs, and generating reports
 
 /**
  * Opens a connection to the Cost Manager database
@@ -45,6 +46,7 @@ idb.openCostsDB = function(databaseName, databaseVersion) {
         };
     });
 };
+// Database is initialized or upgraded lazily the first time it is accessed
 
 /**
  * Adds a new cost item to the database
@@ -101,6 +103,7 @@ idb.addCost = function(cost) {
         }).catch(reject);
     });
 };
+// Adds a record and returns a simplified object for UI confirmation
 
 /**
  * Gets a detailed report for a specific month and year in a specific currency
@@ -151,6 +154,7 @@ idb.getReport = function(year, month, currency) {
         }).catch(reject);
     });
 };
+// Retrieves all records for the given year-month and computes a simple total
 
 // Make idb available globally
 window.idb = idb;

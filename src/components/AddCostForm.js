@@ -17,11 +17,13 @@ import {
   Snackbar
 } from '@mui/material';
 import { addCost } from '../utils/idb';
+// addCost persists a new cost item into local IndexedDB storage
 
 /**
  * Form for creating a new cost entry.
  */
 const AddCostForm = () => {
+  // Form input state and UI feedback flags
   const [formData, setFormData] = useState({
     sum: '',
     currency: 'USD',
@@ -42,6 +44,7 @@ const AddCostForm = () => {
     'UTILITIES',
     'OTHER'
   ];
+  // Currencies and categories define controlled vocabularies for data integrity
 
   /** Updates form state for controlled inputs. */
   const handleInputChange = (event) => {
@@ -56,6 +59,7 @@ const AddCostForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     
+    // Validate required fields and basic number constraints
     // Validate form
     if (!formData.sum || !formData.category || !formData.description) {
       setSnackbar({
@@ -87,6 +91,7 @@ const AddCostForm = () => {
 
       const result = await addCost(costData);
       
+      // Provide user feedback and reset inputs on success
       setSnackbar({
         open: true,
         message: 'Cost item added successfully!',
@@ -102,6 +107,7 @@ const AddCostForm = () => {
       });
       
     } catch (error) {
+      // Show an error message if persistence fails
       setSnackbar({
         open: true,
         message: `Error adding cost item: ${error.message}`,
@@ -127,6 +133,7 @@ const AddCostForm = () => {
         Add a new expense to your cost manager. The date will be automatically set to today.
       </Typography>
 
+      {/* Form elements for sum, currency, category, and description */}
       <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600 }}>
         <TextField
           fullWidth
@@ -185,6 +192,7 @@ const AddCostForm = () => {
           rows={3}
         />
 
+        {/* Submit triggers validation and persistence */}
         <Button
           type="submit"
           variant="contained"
@@ -196,6 +204,7 @@ const AddCostForm = () => {
         </Button>
       </Box>
 
+      {/* Snackbar shows success/error messages non-intrusively */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

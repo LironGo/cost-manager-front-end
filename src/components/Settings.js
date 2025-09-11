@@ -14,9 +14,11 @@ import {
   Divider
 } from '@mui/material';
 import { setExchangeUrl, getExchangeUrl, getExchangeRates } from '../services/currencyService';
+// currencyService abstracts storage and retrieval of FX configuration and rates
 
 /** Settings screen for currency configuration. */
 const Settings = () => {
+  // UI state for the exchange URL input and feedback snackbar
   const [exchangeUrl, setExchangeUrlState] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
@@ -25,6 +27,7 @@ const Settings = () => {
     // Load current settings
     setExchangeUrlState(getExchangeUrl());
   }, []);
+  // On mount, populate the input from persisted configuration
 
   /** Updates the exchange rates URL input. */
   const handleUrlChange = (event) => {
@@ -85,6 +88,7 @@ const Settings = () => {
   };
 
   const currentRates = getExchangeRates();
+  // Rates snapshot is displayed read-only for user awareness
 
   return (
     <Paper elevation={3} sx={{ p: 4 }}>
@@ -96,6 +100,7 @@ const Settings = () => {
         Configure your currency exchange rate settings and application preferences.
       </Typography>
 
+      {/* Section: configure URL used to fetch exchange rates */}
       <Box sx={{ maxWidth: 600 }}>
         <Typography variant="h6" gutterBottom>
           Currency Exchange Rates
@@ -135,6 +140,7 @@ const Settings = () => {
 
         <Divider sx={{ my: 3 }} />
 
+        {/* Section: show the currently loaded exchange rates */}
         <Typography variant="h6" gutterBottom>
           Current Exchange Rates
         </Typography>

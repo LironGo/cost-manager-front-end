@@ -12,8 +12,10 @@ let exchangeRates = {
   EURO: 0.85,
   ILS: 3.5
 };
+// In-memory cache of latest known exchange rates for supported currencies
 
 let exchangeUrl = DEFAULT_EXCHANGE_URL;
+// Mutable URL allows configuration from the Settings screen
 
 /**
  * Fetches exchange rates from the configured URL
@@ -43,6 +45,7 @@ export const fetchExchangeRates = async () => {
     return exchangeRates;
   }
 };
+// Fallback to cached rates ensures the app keeps working offline or on API errors
 
 /**
  * Converts an amount from one currency to another
@@ -62,6 +65,7 @@ export const convertAmount = (amount, fromCurrency, toCurrency) => {
   
   return convertedAmount;
 };
+// Two-step conversion avoids needing cross rates and keeps logic simple
 
 /**
  * Converts a report to the specified currency
@@ -90,6 +94,7 @@ export const convertCurrency = async (report, targetCurrency) => {
     }
   };
 };
+// Return value mirrors input shape with normalized currency and recalculated total
 
 /**
  * Sets the exchange rates URL

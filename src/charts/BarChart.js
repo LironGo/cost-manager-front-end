@@ -19,9 +19,11 @@ import {
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
+// Utilities provide monthly reports and currency normalization for totals
 
 /** Renders a bar chart of monthly totals for the selected year. */
 const BarChart = () => {
+  // State holds user selections, built chart data, and UI flags
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
     currency: 'USD'
@@ -65,6 +67,7 @@ const BarChart = () => {
       // Get data for all 12 months
       for (let month = 1; month <= 12; month++) {
         try {
+          // Generate report per month and convert totals to selected currency
           const report = await getReport(formData.year, month, formData.currency);
           const convertedReport = await convertCurrency(report, formData.currency);
           
@@ -83,6 +86,7 @@ const BarChart = () => {
       
       setChartData(monthlyData);
       
+      // Notify user that chart data is ready
       setSnackbar({
         open: true,
         message: 'Chart generated successfully!',

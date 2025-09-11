@@ -19,9 +19,11 @@ import {
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
+// getReport reads monthly costs; convertCurrency normalizes values for charting
 
 /** Renders a pie chart of costs grouped by category. */
 const PieChart = () => {
+  // State holds user selections, generated chart data, and UI flags
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
@@ -49,6 +51,7 @@ const PieChart = () => {
 
   // Colors for pie chart segments
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
+  // Fixed palette cycles through categories deterministically
 
   /** Updates control state for chart inputs. */
   const handleInputChange = (event) => {
@@ -64,6 +67,7 @@ const PieChart = () => {
     setLoading(true);
     
     try {
+      // Build report and aggregate sums per category
       const report = await getReport(formData.year, formData.month, formData.currency);
       const convertedReport = await convertCurrency(report, formData.currency);
       
@@ -86,6 +90,7 @@ const PieChart = () => {
       
       setChartData(data);
       
+      // Notify user chart is ready
       setSnackbar({
         open: true,
         message: 'Chart generated successfully!',
