@@ -1,0 +1,209 @@
+import React, { useState } from 'react';
+import {
+  Paper,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Alert,
+  Snackbar,
+  CircularProgress
+} from '@mui/material';
+import { getReport } from '../utils/idb';
+import { convertCurrency } from '../services/currencyService';
+
+const MonthlyReport = () => {
+  const [formData, setFormData] = useState({
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    currency: 'USD'
+  });
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
+  const currencies = ['USD', 'ILS', 'GBP', 'EURO'];
+  const months = [
+    { value: 1, label: 'January' },
+    { value: 2, label: 'February' },
+    { value: 3, label: 'March' },
+    { value: 4, label: 'April' },
+    { value: 5, label: 'May' },
+    { value: 6, label: 'June' },
+    { value: 7, label: 'July' },
+    { value: 8, label: 'August' },
+    { value: 9, label: 'September' },
+    { value: 10, label: 'October' },
+    { value: 11, label: 'November' },
+    { value: 12, label: 'December' }
+  ];
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleGenerateReport = async () => {
+    setLoading(true);
+    
+    try {
+      const rawReport = await getReport(formData.year, formData.month, formData.currency);
+      
+      // Convert currencies if needed
+      const convertedReport = await convertCurrency(rawReport, formData.currency);
+      
+      setReport(convertedReport);
+      
+      setSnackbar({
+        open: true,
+        message: 'Report generated successfully!',
+        severity: 'success'
+      });
+      
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: `Error generating report: ${error.message}`,
+        severity: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  return (
+    <Paper elevation={3} sx={{ p: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Monthly Report
+      </Typography>
+      
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        Generate a detailed report for a specific month and year in your preferred currency.
+      </Typography>
+
+      <Box sx={{ display: 'flex', gap: 2, mb: 4, flexWrap: 'wrap' }}>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Year</InputLabel>
+          <Select
+            name="year"
+            value={formData.year}
+            onChange={handleInputChange}
+            label="Year"
+          >
+            {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map((year) => (
+              <MenuItem key={year} value={year}>
+                {year}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ minWidth: 150 }}>
+          <InputLabel>Month</InputLabel>
+          <Select
+            name="month"
+            value={formData.month}
+            onChange={handleInputChange}
+            label="Month"
+          >
+            {months.map((month) => (
+              <MenuItem key={month.value} value={month.value}>
+                {month.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Currency</InputLabel>
+          <Select
+            name="currency"
+            value={formData.currency}
+            onChange={handleInputChange}
+            label="Currency"
+          >
+            {currencies.map((currency) => (
+              <MenuItem key={currency} value={currency}>
+                {currency}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <Button
+          variant="contained"
+          onClick={handleGenerateReport}
+          disabled={loading}
+          sx={{ minWidth: 150 }}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Generate Report'}
+        </Button>
+      </Box>
+
+      {report && (
+        <Box>
+          <Typography variant="h5" gutterBottom>
+            Report for {months[formData.month - 1].label} {formData.year}
+          </Typography>
+          
+          <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
+            Total: {report.total.total.toFixed(2)} {report.total.currency}
+          </Typography>
+
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Sum</TableCell>
+                  <TableCell>Currency</TableCell>
+                  <TableCell>Category</TableCell>
+                  <TableCell>Description</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {report.costs.map((cost, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{cost.Date.day}</TableCell>
+                    <TableCell>{cost.sum.toFixed(2)}</TableCell>
+                    <TableCell>{cost.currency}</TableCell>
+                    <TableCell>{cost.category}</TableCell>
+                    <TableCell>{cost.description}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      )}
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Paper>
+  );
+};
+
+export default MonthlyReport;
