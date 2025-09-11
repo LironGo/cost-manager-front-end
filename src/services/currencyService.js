@@ -15,6 +15,15 @@ let exchangeRates = {
 // In-memory cache of latest known exchange rates for supported currencies
 
 let exchangeUrl = DEFAULT_EXCHANGE_URL;
+// Try to load a previously saved URL from localStorage
+try {
+  const savedUrl = typeof window !== 'undefined' ? window.localStorage.getItem('exchangeUrl') : null;
+  if (savedUrl) {
+    exchangeUrl = savedUrl;
+  }
+} catch (err) {
+  // Ignore storage errors and keep default URL
+}
 // Mutable URL allows configuration from the Settings screen
 
 /**
@@ -30,12 +39,30 @@ export const fetchExchangeRates = async () => {
     
     const data = await response.json();
     
-    // Extract rates for supported currencies
+    // Normalize different API shapes into our internal rates
+    // Supported inputs:
+    // 1) { rates: { USD, GBP, EUR, ILS } }
+    // 2) { conversion_rates: { USD, GBP, EUR, ILS } }
+    // 3) { conversions: { USD: { USD, GBP, EUR, ILS, ... } } } where values are per 1 USD
+
+    let sourceRates = null;
+    if (data && typeof data === 'object') {
+      if (data.rates && typeof data.rates === 'object') {
+        sourceRates = data.rates;
+      } else if (data.conversion_rates && typeof data.conversion_rates === 'object') {
+        sourceRates = data.conversion_rates;
+      } else if (data.conversions && data.conversions.USD && typeof data.conversions.USD === 'object') {
+        // This API provides cross rates keyed by base currency; use USD row
+        sourceRates = { ...data.conversions.USD, USD: 1 };
+      }
+    }
+
+    // Extract rates for supported currencies with sensible fallbacks
     const rates = {
-      USD: data.rates.USD || 1,
-      GBP: data.rates.GBP || 0.8,
-      EURO: data.rates.EUR || 0.85,
-      ILS: data.rates.ILS || 3.5
+      USD: (sourceRates && (sourceRates.USD ?? 1)) || 1,
+      GBP: (sourceRates && (sourceRates.GBP ?? 0.8)) || 0.8,
+      EURO: (sourceRates && (sourceRates.EUR ?? 0.85)) || 0.85,
+      ILS: (sourceRates && (sourceRates.ILS ?? 3.5)) || 3.5
     };
     
     exchangeRates = rates;
@@ -102,6 +129,13 @@ export const convertCurrency = async (report, targetCurrency) => {
  */
 export const setExchangeUrl = (url) => {
   exchangeUrl = url;
+  try {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('exchangeUrl', url);
+    }
+  } catch (err) {
+    // Ignore storage errors
+  }
 };
 
 /**

@@ -13,19 +13,30 @@ import {
   Snackbar,
   Divider
 } from '@mui/material';
-import { setExchangeUrl, getExchangeUrl, getExchangeRates } from '../services/currencyService';
+import { setExchangeUrl, getExchangeUrl, getExchangeRates, fetchExchangeRates } from '../services/currencyService';
+import FeedbackSnackbar from './FeedbackSnackbar';
 // currencyService abstracts storage and retrieval of FX configuration and rates
 
 /** Settings screen for currency configuration. */
-const Settings = () => {
+function Settings() {
   // UI state for the exchange URL input and feedback snackbar
   const [exchangeUrl, setExchangeUrlState] = useState('');
+  const [ratesSnapshot, setRatesSnapshot] = useState(getExchangeRates());
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  // Load current settings on mount
+  // Load current settings and refresh rates on mount
   useEffect(() => {
     // Load current settings
     setExchangeUrlState(getExchangeUrl());
+    // Also fetch latest rates for display
+    (async () => {
+      try {
+        const latest = await fetchExchangeRates();
+        setRatesSnapshot(latest);
+      } catch (_) {
+        // ignore
+      }
+    })();
   }, []);
   // On mount, populate the input from persisted configuration
 
@@ -34,11 +45,16 @@ const Settings = () => {
     setExchangeUrlState(event.target.value);
   };
 
-  /** Persists the exchange rates URL. */
+  /** Persists the exchange rates URL and refreshes current rates snapshot. */
   const handleSaveSettings = () => {
     try {
       setExchangeUrl(exchangeUrl);
       
+      // Immediately try fetching from the new URL so the UI reflects new rates
+      fetchExchangeRates().then((latest) => {
+        setRatesSnapshot(latest);
+      }).catch(() => {});
+
       setSnackbar({
         open: true,
         message: 'Settings saved successfully!',
@@ -87,7 +103,6 @@ const Settings = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  const currentRates = getExchangeRates();
   // Rates snapshot is displayed read-only for user awareness
 
   return (
@@ -150,7 +165,7 @@ const Settings = () => {
         </Typography>
 
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2 }}>
-          {Object.entries(currentRates).map(([currency, rate]) => (
+          {Object.entries(ratesSnapshot).map(([currency, rate]) => (
             <Paper key={currency} elevation={1} sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="h6" color="primary">
                 {currency}
@@ -173,17 +188,14 @@ const Settings = () => {
         </Typography>
       </Box>
 
-      <Snackbar
+      <FeedbackSnackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
     </Paper>
   );
-};
+}
 
 export default Settings;

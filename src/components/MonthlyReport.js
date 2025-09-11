@@ -24,12 +24,13 @@ import {
 } from '@mui/material';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
+import FeedbackSnackbar from './FeedbackSnackbar';
 // getReport reads costs for the given month; convertCurrency normalizes totals
 
 /**
  * UI for generating a monthly costs report.
  */
-const MonthlyReport = () => {
+function MonthlyReport() {
   // Local UI state: form inputs, fetched report, loading, and feedback
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
@@ -211,17 +212,14 @@ const MonthlyReport = () => {
         </Box>
       )}
 
-      <Snackbar
+      <FeedbackSnackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
     </Paper>
   );
-};
+}
 
 export default MonthlyReport;

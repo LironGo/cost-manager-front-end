@@ -17,12 +17,13 @@ import {
   Snackbar
 } from '@mui/material';
 import { addCost } from '../utils/idb';
+import FeedbackSnackbar from './FeedbackSnackbar';
 // addCost persists a new cost item into local IndexedDB storage
 
 /**
  * Form for creating a new cost entry.
  */
-const AddCostForm = () => {
+function AddCostForm() {
   // Form input state and UI feedback flags
   const [formData, setFormData] = useState({
     sum: '',
@@ -205,17 +206,14 @@ const AddCostForm = () => {
       </Box>
 
       {/* Snackbar shows success/error messages non-intrusively */}
-      <Snackbar
+      <FeedbackSnackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
     </Paper>
   );
-};
+}
 
 export default AddCostForm;

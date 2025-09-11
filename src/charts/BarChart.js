@@ -19,10 +19,11 @@ import {
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
+import FeedbackSnackbar from '../components/FeedbackSnackbar';
 // Utilities provide monthly reports and currency normalization for totals
 
 /** Renders a bar chart of monthly totals for the selected year. */
-const BarChart = () => {
+function BarChart() {
   // State holds user selections, built chart data, and UI flags
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
@@ -193,17 +194,14 @@ const BarChart = () => {
         </Box>
       )}
 
-      <Snackbar
+      <FeedbackSnackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
     </Paper>
   );
-};
+}
 
 export default BarChart;

@@ -19,10 +19,11 @@ import {
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
+import FeedbackSnackbar from '../components/FeedbackSnackbar';
 // getReport reads monthly costs; convertCurrency normalizes values for charting
 
 /** Renders a pie chart of costs grouped by category. */
-const PieChart = () => {
+function PieChart() {
   // State holds user selections, generated chart data, and UI flags
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
@@ -215,17 +216,14 @@ const PieChart = () => {
         </Box>
       )}
 
-      <Snackbar
+      <FeedbackSnackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
     </Paper>
   );
-};
+}
 
 export default PieChart;
