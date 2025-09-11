@@ -8,6 +8,7 @@ import PieChart from './charts/PieChart';
 import BarChart from './charts/BarChart';
 import Settings from './components/Settings';
 // Create MUI theme
+
 const theme = createTheme({
   palette: {
     primary: {
