@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -21,6 +21,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "prebuild": "npm ci",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
