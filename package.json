@@ -20,6 +20,16 @@
     "recharts": "^3.1.2",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-keywords": "^5.1.0"
+  },
+  "overrides": {
+    "schema-utils@^2": {
+      "ajv": "6.12.6",
+      "ajv-keywords": "3.5.2"
+    }
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
