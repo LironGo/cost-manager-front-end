@@ -112,11 +112,13 @@ export const addCost = function(cost) {
  * @returns {Promise} Promise that resolves to report object
  */
 export const getReport = async function(year, month, currency) {
+    // Open the IndexedDB database and create a read-only transaction
     const db = await openCostsDB('costsdb', 1);
     const transaction = db.transaction(['costs'], 'readonly');
     const store = transaction.objectStore('costs');
     const index = store.index('yearMonth');
 
+    // Query all costs for the specified year and month using composite index
     const costs = await new Promise((resolve, reject) => {
         const request = index.getAll([year, month]);
         request.onsuccess = function() {
@@ -127,6 +129,7 @@ export const getReport = async function(year, month, currency) {
         };
     });
 
+    // Transform raw cost data into a standardized format for reporting
     const preparedCosts = costs.map(cost => ({
         sum: Number(cost.sum) || 0,
         currency: cost.currency,
@@ -135,8 +138,10 @@ export const getReport = async function(year, month, currency) {
         Date: { day: cost.day }
     }));
 
+    // Calculate the total sum of all costs in their original currencies
     const total = preparedCosts.reduce((sum, cost) => sum + cost.sum, 0);
 
+    // Create the base report object with year, month, costs, and total
     const report = {
         year: year,
         month: month,
@@ -147,6 +152,7 @@ export const getReport = async function(year, month, currency) {
         }
     };
 
+    // Convert all costs and totals to the target currency
     const convertedReport = await convertCurrency(report, currency);
     return convertedReport;
 };
