@@ -41,6 +41,7 @@ function MonthlyReport() {
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
+  // Supported currency codes exposed to the currency dropdown
   const currencies = ['USD', 'ILS', 'GBP', 'EURO'];
   const months = [
     { value: 1, label: 'January' },
@@ -69,6 +70,7 @@ function MonthlyReport() {
 
   /** Fetches data and prepares the monthly report. */
   const handleGenerateReport = async () => {
+    // Indicate loading state to disable actions and show spinner
     setLoading(true);
     
     try {
@@ -123,6 +125,7 @@ function MonthlyReport() {
             onChange={handleInputChange}
             label="Year"
           >
+            {/* Generate a rolling 10-year range centered around current year */}
             {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map((year) => (
               <MenuItem key={year} value={year}>
                 {year}
@@ -182,6 +185,7 @@ function MonthlyReport() {
           </Typography>
           
           <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
+            {/* Format totals with two decimal places for consistency */}
             Total: {report.total.total.toFixed(2)} {report.total.currency}
           </Typography>
 
@@ -197,6 +201,7 @@ function MonthlyReport() {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {/* Render each cost item as a row in the table */}
                 {report.costs.map((cost, index) => (
                   <TableRow key={index}>
                     <TableCell>{cost.Date.day}</TableCell>
@@ -212,6 +217,7 @@ function MonthlyReport() {
         </Box>
       )}
 
+      {/* Centralized feedback notifications for async operations */}
       <FeedbackSnackbar
         open={snackbar.open}
         message={snackbar.message}

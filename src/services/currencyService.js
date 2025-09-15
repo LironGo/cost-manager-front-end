@@ -4,7 +4,7 @@
  */
 
 // Default exchange rates URL (can be configured in settings)
-const DEFAULT_EXCHANGE_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
+const defaultExchangeUrl = 'https://api.exchangerate-api.com/v4/latest/USD';
 
 let exchangeRates = {
   USD: 1,
@@ -14,7 +14,7 @@ let exchangeRates = {
 };
 // In-memory cache of latest known exchange rates for supported currencies
 
-let exchangeUrl = DEFAULT_EXCHANGE_URL;
+let exchangeUrl = defaultExchangeUrl;
 // Try to load a previously saved URL from localStorage
 try {
   const savedUrl = typeof window !== 'undefined' ? window.localStorage.getItem('exchangeUrl') : null;

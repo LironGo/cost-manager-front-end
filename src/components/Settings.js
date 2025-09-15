@@ -2,6 +2,7 @@
  * Settings component
  * Allows configuring the exchange rates API URL and viewing current rates.
  */
+// React and MUI imports used to build the settings UI
 import React, { useState, useEffect } from 'react';
 import {
   Paper,
@@ -34,7 +35,7 @@ function Settings() {
         const latest = await fetchExchangeRates();
         setRatesSnapshot(latest);
       } catch (_) {
-        // ignore
+        // Silently ignore fetch errors; UI remains with last known snapshot
       }
     })();
   }, []);

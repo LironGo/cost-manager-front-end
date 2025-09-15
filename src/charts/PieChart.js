@@ -16,6 +16,7 @@ import {
   Alert,
   Snackbar
 } from '@mui/material';
+// Recharts primitives used to render a responsive pie chart
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
@@ -49,9 +50,10 @@ function PieChart() {
     { value: 11, label: 'November' },
     { value: 12, label: 'December' }
   ];
+  // Months list powers the month dropdown labels/values
 
   // Colors for pie chart segments
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
+  const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
   // Fixed palette cycles through categories deterministically
 
   /** Updates control state for chart inputs. */
@@ -86,7 +88,7 @@ function PieChart() {
       const data = Object.entries(categoryTotals).map(([category, value], index) => ({
         name: category,
         value: parseFloat(value.toFixed(2)),
-        fill: COLORS[index % COLORS.length]
+        fill: colors[index % colors.length]
       }));
       
       setChartData(data);
@@ -124,6 +126,7 @@ function PieChart() {
         View your spending breakdown by category for a specific month and year.
       </Typography>
 
+      {/* Controls row: year, month, currency selectors and action button */}
       <Box sx={{ display: 'flex', gap: 2, mb: 4, flexWrap: 'wrap' }}>
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Year</InputLabel>
@@ -133,6 +136,7 @@ function PieChart() {
             onChange={handleInputChange}
             label="Year"
           >
+            {/* Rolling 10-year range centered around current year */}
             {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map((year) => (
               <MenuItem key={year} value={year}>
                 {year}
@@ -141,6 +145,7 @@ function PieChart() {
           </Select>
         </FormControl>
 
+        {/* Month picker bound to controlled state */}
         <FormControl sx={{ minWidth: 150 }}>
           <InputLabel>Month</InputLabel>
           <Select
@@ -157,6 +162,7 @@ function PieChart() {
           </Select>
         </FormControl>
 
+        {/* Currency picker controls units displayed in the chart */}
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Currency</InputLabel>
           <Select
@@ -179,13 +185,16 @@ function PieChart() {
           disabled={loading}
           sx={{ minWidth: 150 }}
         >
+          {/* Show spinner while generating; disable button to prevent repeats */}
           {loading ? <CircularProgress size={24} /> : 'Generate Chart'}
         </Button>
       </Box>
 
       {chartData.length > 0 && (
         <Box sx={{ height: 400, width: '100%' }}>
+          {/* Responsive container ensures the chart adapts to parent size */}
           <ResponsiveContainer width="100%" height="100%">
+            {/* Recharts pie chart with legend and tooltip */}
             <RechartsPieChart>
               <Pie
                 data={chartData}
@@ -193,14 +202,17 @@ function PieChart() {
                 cy="50%"
                 labelLine={false}
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                /* Pie size (radius) for consistent layout */
                 outerRadius={80}
                 fill="#8884d8"
+                /* Use the numeric 'value' field from each datum */
                 dataKey="value"
               >
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </Pie>
+              {/* Tooltip shows absolute amounts with the selected currency */}
               <Tooltip formatter={(value) => [`${value} ${formData.currency}`, 'Amount']} />
               <Legend />
             </RechartsPieChart>
@@ -208,6 +220,7 @@ function PieChart() {
         </Box>
       )}
 
+      {/* Empty state when there's no data for the selected period */}
       {chartData.length === 0 && !loading && (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Typography variant="body1" color="text.secondary">
@@ -216,6 +229,7 @@ function PieChart() {
         </Box>
       )}
 
+      {/* Snackbar for success/error while generating chart */}
       <FeedbackSnackbar
         open={snackbar.open}
         message={snackbar.message}

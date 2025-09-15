@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   <!-- Basic HTML document setup with UTF-8 encoding -->
    <meta charset="UTF-8">
    <title>IDB Library Test</title>
 </head>
 <body>
+   <!-- Load the IndexedDB library for testing -->
    <script src="idb.js"></script>
    <script>
+     // Main test function to verify IDB operations
      async function test() {
+       // Open the costs database with version 1
        const db = await idb.openCostsDB("costsdb",1);
+       
+       // Add first test cost item - food expense
        const result1 = await idb.addCost({sum:200, currency:"USD", category:"FOOD", description:"pizza"});
+       
+       // Add second test cost item - car expense
        const result2 = await idb.addCost({sum:400, currency: "USD", category:"CAR", description:"fuel"});
+       
+       // Verify database creation was successful
        if(db) {
          console.log("creating db succeeded");
        }
+       
+       // Check if first cost addition succeeded
        if(result1) {
          console.log("adding 1st cost item succeeded");
        }
+       
+       // Check if second cost addition succeeded or failed
        if(result2) {
          console.log("adding 2nd cost item succeeded");
        }
@@ -24,6 +38,7 @@
          console.log("adding 2st cost item failed");
        }
      }
+     // Execute the test function immediately
      test()
    </script>
 </body>

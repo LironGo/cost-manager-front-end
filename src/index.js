@@ -1,10 +1,13 @@
+// App entry point: import React and dependencies
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Initialize a React 18 root tied to the #root DOM element
 const root = ReactDOM.createRoot(document.getElementById('root'));
+// Mount the application within StrictMode for additional runtime checks
 root.render(
   <React.StrictMode>
     <App />

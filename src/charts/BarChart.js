@@ -16,6 +16,7 @@ import {
   Alert,
   Snackbar
 } from '@mui/material';
+// Recharts primitives for responsive bar chart rendering
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getReport } from '../utils/idb';
 import { convertCurrency } from '../services/currencyService';
@@ -48,6 +49,7 @@ function BarChart() {
     { value: 11, label: 'Nov' },
     { value: 12, label: 'Dec' }
   ];
+  // Months list supplies x-axis labels and iteration order
 
   /** Updates control state for chart inputs. */
   const handleInputChange = (event) => {
@@ -60,6 +62,7 @@ function BarChart() {
 
   /** Builds chart data by aggregating per-month totals. */
   const generateChart = async () => {
+    // Enter loading to disable UI and show progress
     setLoading(true);
     
     try {
@@ -85,6 +88,7 @@ function BarChart() {
         }
       }
       
+      // Update chart state with aggregated monthly totals
       setChartData(monthlyData);
       
       // Notify user that chart data is ready
@@ -120,6 +124,7 @@ function BarChart() {
         View your total spending for each month of a selected year.
       </Typography>
 
+      {/* Controls row: year and currency selectors with action button */}
       <Box sx={{ display: 'flex', gap: 2, mb: 4, flexWrap: 'wrap' }}>
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Year</InputLabel>
@@ -129,6 +134,7 @@ function BarChart() {
             onChange={handleInputChange}
             label="Year"
           >
+            {/* Rolling 10-year range centered around current year */}
             {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map((year) => (
               <MenuItem key={year} value={year}>
                 {year}
@@ -137,6 +143,7 @@ function BarChart() {
           </Select>
         </FormControl>
 
+        {/* Currency picker controls the units shown in bars and tooltips */}
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Currency</InputLabel>
           <Select
@@ -159,12 +166,14 @@ function BarChart() {
           disabled={loading}
           sx={{ minWidth: 150 }}
         >
+          {/* Show spinner while generating to indicate progress */}
           {loading ? <CircularProgress size={24} /> : 'Generate Chart'}
         </Button>
       </Box>
 
       {chartData.length > 0 && (
         <Box sx={{ height: 400, width: '100%' }}>
+          {/* Responsive container scales the chart to available width/height */}
           <ResponsiveContainer width="100%" height="100%">
             <RechartsBarChart
               data={chartData}
@@ -178,6 +187,7 @@ function BarChart() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
+              {/* Tooltip shows value with currency and label */}
               <Tooltip formatter={(value) => [`${value.toFixed(2)} ${formData.currency}`, 'Total']} />
               <Legend />
               <Bar dataKey="total" fill="#8884d8" />
@@ -194,6 +204,7 @@ function BarChart() {
         </Box>
       )}
 
+      {/* Snackbar for success/error while generating chart */}
       <FeedbackSnackbar
         open={snackbar.open}
         message={snackbar.message}

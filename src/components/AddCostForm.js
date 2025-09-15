@@ -80,9 +80,11 @@ function AddCostForm() {
       return;
     }
 
+    // Enter loading state to prevent duplicate submissions
     setLoading(true);
     
     try {
+      // Normalize and sanitize values before persisting
       const costData = {
         sum: parseFloat(formData.sum),
         currency: formData.currency,
@@ -90,6 +92,7 @@ function AddCostForm() {
         description: formData.description
       };
 
+      // Persist the new cost item to IndexedDB (async side effect)
       const result = await addCost(costData);
       
       // Provide user feedback and reset inputs on success
@@ -145,9 +148,11 @@ function AddCostForm() {
           onChange={handleInputChange}
           margin="normal"
           required
+          // Enforce non-negative values and cents precision at the input level
           inputProps={{ min: 0, step: 0.01 }}
         />
 
+        {/* Required currency picker sourced from predefined list */}
         <FormControl fullWidth margin="normal">
           <InputLabel>Currency *</InputLabel>
           <Select
@@ -164,6 +169,7 @@ function AddCostForm() {
           </Select>
         </FormControl>
 
+        {/* Required category picker to enforce allowed categories */}
         <FormControl fullWidth margin="normal">
           <InputLabel>Category *</InputLabel>
           <Select
@@ -181,6 +187,7 @@ function AddCostForm() {
           </Select>
         </FormControl>
 
+        {/* Required description; multiline for better readability */}
         <TextField
           fullWidth
           label="Description *"
