@@ -24,6 +24,14 @@ idb.openCostsDB = function(databaseName, databaseVersion) {
         
         request.onsuccess = function() {
             const db = request.result;
+            // Also expose convenience methods directly on the db instance
+            // so callers like test2.html can do db.addCost(...)
+            try {
+                db.addCost = function(cost) { return idb.addCost(cost); };
+                db.getReport = function(year, month, currency) { return idb.getReport(year, month, currency); };
+            } catch (e) {
+                // If the IDBDatabase is not extensible, ignore and just return the db
+            }
             resolve(db);
         };
         
