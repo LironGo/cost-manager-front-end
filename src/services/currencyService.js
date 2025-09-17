@@ -44,6 +44,7 @@ export const fetchExchangeRates = async () => {
     // 1) { rates: { USD, GBP, EUR, ILS } }
     // 2) { conversion_rates: { USD, GBP, EUR, ILS } }
     // 3) { conversions: { USD: { USD, GBP, EUR, ILS, ... } } } where values are per 1 USD
+    // 4) Flat object: { USD, GBP, EUR/EURO, ILS }
 
     let sourceRates = null;
     if (data && typeof data === 'object') {
@@ -54,6 +55,13 @@ export const fetchExchangeRates = async () => {
       } else if (data.conversions && data.conversions.USD && typeof data.conversions.USD === 'object') {
         // This API provides cross rates keyed by base currency; use USD row
         sourceRates = { ...data.conversions.USD, USD: 1 };
+      } else if (
+        // Flat object with expected currency keys (USD and at least one of the others)
+        (typeof data.USD === 'number') && (
+          typeof data.GBP === 'number' || typeof data.EUR === 'number' || typeof data.EURO === 'number' || typeof data.ILS === 'number'
+        )
+      ) {
+        sourceRates = data;
       }
     }
 
@@ -61,7 +69,8 @@ export const fetchExchangeRates = async () => {
     const rates = {
       USD: (sourceRates && (sourceRates.USD ?? 1)) || 1,
       GBP: (sourceRates && (sourceRates.GBP ?? 0.8)) || 0.8,
-      EURO: (sourceRates && (sourceRates.EUR ?? 0.85)) || 0.85,
+      // Accept either EUR or EURO keys from the source
+      EURO: (sourceRates && ((sourceRates.EURO ?? sourceRates.EUR) ?? 0.85)) || 0.85,
       ILS: (sourceRates && (sourceRates.ILS ?? 3.5)) || 3.5
     };
     
